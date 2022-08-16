@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
+
 
 function Events() {
+  const [events, setEvents] = useState([]);
+
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/events/")
+      .then((res) => {
+        setEvents(res.data)
+      })
+      .catch((err) => console.log(err));
+    }, []);
+  
   return (
     <div className="content-wrapper">
       {/* /.row */}
@@ -30,43 +43,44 @@ function Events() {
             </div>
             {/* /.card-header */}
             <div className="card-body table-responsive p-0">
-              <table className="table table-hover text-nowrap">
+              <table className="table table-hover text-nowrap text-center">
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Description</th>
-                    <th>Capacity</th>
+                    <th>Capacity(people)</th>
                     <th>Start date</th>
                     <th>End date</th>
-                    <th>Price</th>
+                    <th>Price(EGP)</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Menofia</td>
-                    <td>Shebin-Elkom, Menofia, Egypt</td>
-                    <td>
-                      Bacon ipsum dolor sit amet salami venison chicken flank
-                      fatback doner.
-                    </td>
-                    <td>
-                      <span className="tag tag-success">01275450853</span>
-                    </td>
-                    <td>
-                      <a className="btn btn-warning mx-2" href="">
-                        Edit
-                      </a>
-                      <a className="btn btn-danger mx-2" href="">
-                        Delete
-                      </a>
-                      <a className="btn btn-info mx-2" href="">
-                        Show
-                      </a>
-                    </td>
-                  </tr>
+                {
+                  events.map((event) => {
+                    return (
+                      <tr key={event.id}>
+                        <td>{event.id}</td>
+                        <td>{event.name}</td>
+                        <td>{event.capacity}</td>
+                        <td>{event.start_date.substring(0, 10)}</td>
+                        <td>{event.end_date.substring(0, 10)}</td>
+                        <td>{event.price}</td>
+                        <td>
+                          <a className="btn btn-warning mx-2" href="">
+                            Edit
+                          </a>
+                          <a className="btn btn-danger mx-2" href="">
+                            Delete
+                          </a>
+                          <a className="btn btn-info mx-2" href="">
+                            Show
+                          </a>
+                        </td>
+                      </tr>
+                    )
+                  })
+                }
                 </tbody>
               </table>
             </div>

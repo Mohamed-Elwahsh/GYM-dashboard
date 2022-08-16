@@ -1,72 +1,80 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
+
 
 function Trainers() {
-  return (
+  const [trainers, setTrainers] = useState([]);
+
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/trainers/")
+      .then((res) => {
+        setTrainers(res.data)
+      })
+      .catch((err) => console.log(err));
+    }, []);
+    
+    return (
     <div className="content-wrapper">
       {/* /.row */}
       <div className="row">
         <div className="col-12">
           <div className="card">
             <div className="card-header">
-              <h3 className="card-title">Classes Table</h3>
+              <h3 className="card-title">Trainers Table</h3>
               <div className="card-tools">
                 <div
                   className="input-group input-group-sm"
                   style={{ width: 150 }}
                 >
-                  <input
-                    type="text"
-                    name="table_search"
-                    className="form-control float-right"
-                    placeholder="Search"
-                  />
-                  <div className="input-group-append">
-                    <button type="submit" className="btn btn-default">
-                      <i className="fas fa-search" />
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
             {/* /.card-header */}
             <div className="card-body table-responsive p-0">
-              <table className="table table-hover text-nowrap">
-                <thead>
+              <table className="table table-hover text-nowrap text-center">
+                <thead >
                   <tr>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Age</th>
                     <th>Gender</th>
                     <th>Phone</th>
-                    <th>Experience</th>
+                    <th>Experience (years)</th>
                     <th>Branch</th>
                     <th>Class</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Mohamed Elwahsh</td>
-                    <td>25</td>
-                    <td>Male</td>
-                    <td>01275450853</td>
-                    <td>3 years</td>
-                    <td>Menofia</td>
-                    <td>Yoga</td>
-                    <td>
-                      <a className="btn btn-warning mx-2" href="">
-                        Edit
-                      </a>
-                      <a className="btn btn-danger mx-2" href="">
-                        Delete
-                      </a>
-                      <a className="btn btn-info mx-2" href="">
-                        Show
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
+                {
+                  trainers.map((trainer) => {
+                    return(
+                      <tr key={trainer.id}>
+                        <td>{trainer.id}</td>
+                        <td>{trainer.name}</td>
+                        <td>{trainer.age}</td>
+                        <td>{trainer.gender}</td>
+                        <td>{trainer.phone}</td>
+                        <td>{trainer.experience}</td>
+                        <td>{trainer.branch_id.name}</td>
+                        <td>{trainer.class_id.name}</td>
+                        <td>
+                          <a className="btn btn-warning mx-2" href="">
+                            Edit
+                          </a>
+                          <a className="btn btn-danger mx-2" href="">
+                            Delete
+                          </a>
+                          <a className="btn btn-info mx-2" href="">
+                            Show
+                          </a>
+                        </td>
+                      </tr>
+                    )
+                  })
+                }
+                  </tbody>
               </table>
             </div>
             {/* /.card-body */}

@@ -1,6 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
+import { confirmAlert } from 'react-confirm-alert';
 
 function Classes() {
+  const [classes, setClasses] = useState([]);
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNTk4OTU3LCJpYXQiOjE2NjA1OTU4NzksImp0aSI6IjkxYWUzODA2OGIzNTQzOTM5NGMzMDM4ZDI1YmI5OTBlIiwidXNlcl9pZCI6MX0.Ybe--IZBr9IV0L2adwJquVv9oKe8kExGwCuXbV6IvYg"
+  // const token = "eyVOXrj4LBODkfptrLlaS-EtW0kdhy3tOYiGt_PdWnvY0"
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/classes/")
+      .then((res) => {
+        setClasses(res.data)
+      })
+      .catch((err) => console.log(err));
+    }, []);
+
+    const deleteItem = (id) =>{
+      axios.delete(`http://localhost:8000/api/events/modify/${id}`,   
+                {headers: {
+                      authorization:`Bearer ${token}`
+                    }})
+            .then((res) => {
+              console.log(res);
+              setClasses(
+                classes.filter((cls) => {
+                  return cls.id != id
+                })
+              )
+            })
+            .catch((err) => alert(err));
+    }
+    
+    const deleteClass = (e, id) => {
+      e.preventDefault();
+
+      confirmAlert({
+        title: 'Confirm to submit',
+        message: 'Are you sure you want to delete this item?',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => deleteItem(id)
+          },
+          {
+            label: 'No',
+          }
+        ]
+      });
+    }
+
   return (
     <div className="content-wrapper">
       {/* /.row */}
@@ -30,39 +78,38 @@ function Classes() {
             </div>
             {/* /.card-header */}
             <div className="card-body table-responsive p-0">
-              <table className="table table-hover text-nowrap">
+              <table className="table table-hover text-nowrap text-center">
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Description</th>
                     <th>Price</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Yoga</td>
-                    <td>
-                      Bacon ipsum dolor sit amet salami venison chicken flank
-                      fatback doner.
-                    </td>
-                    <td>
-                      <span className="tag tag-success">50$</span>
-                    </td>
-                    <td>
-                      <a className="btn btn-warning mx-2" href="">
-                        Edit
-                      </a>
-                      <a className="btn btn-danger mx-2" href="">
-                        Delete
-                      </a>
-                      <a className="btn btn-info mx-2" href="">
-                        Show
-                      </a>
-                    </td>
-                  </tr>
+                  {
+                    classes.map((cls) => {
+                      return(
+                    <tr key={cls.id}>
+                      <td>{cls.id}</td>
+                      <td>{cls.name}</td>
+                      <td>{cls.price}</td>
+                      <td>
+                        <a className="btn btn-warning mx-2" href="">
+                          Edit
+                        </a>
+                        <a className="btn btn-danger mx-2" href="" onClick={e => deleteClass(e, cls.id)}>
+                          Delete
+                        </a>
+                        <a className="btn btn-info mx-2" href="">
+                          Show
+                        </a>
+                      </td>
+                    </tr>
+                      )
+                    })
+                  }
                 </tbody>
               </table>
             </div>
