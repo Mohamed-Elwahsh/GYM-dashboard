@@ -9,15 +9,19 @@ import Classes from './components/Classes'
 import Branches from './components/Branches'
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+import Users from './components/Users'
+import Plans from './components/Plans'
 
 function App() {
   return (
     <>
     <Header />
     <Home />
+    <Users/>
     <SideNav />
     <Trainers/>
     <Events/>
+    <Plans/>
     <Branches/>
     <Classes/>
     <Footer/>

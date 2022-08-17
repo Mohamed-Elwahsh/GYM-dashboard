@@ -6,15 +6,52 @@ function Trainers() {
   const [trainers, setTrainers] = useState([]);
   const [trainer, setTrainer] = useState({})
   const [trianerCard, setTrainertCard] = useState(false)
+  const [createForm, setCreateForm] = useState(false)
+  const [editForm, setEditForm] = useState(false)
+  const [branches, setBranches] = useState([])
+  const [classes, setClasses] = useState([])
+  const [newTrainer, setNewTrainer] = useState({
+    age: '',
+    branch_id: "",
+    class_id: "",
+    experience: "",
+    gender: "",
+    image: "",
+    name: "",
+    phone: "",
+  })
 
+  const [editTrainer, setEditTrainer] = useState({
+    id:"",
+    age: '',
+    branch_id: "",
+    class_id: "",
+    experience: "",
+    gender: "",
+    name: "",
+    phone: "",
+  })
 
-  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNjUyNzA1LCJpYXQiOjE2NjA2NTI0MDUsImp0aSI6IjcwNWJkZWMwZDMyYzQwMzFiMWJjNDI0MDY2MDRmMGRjIiwidXNlcl9pZCI6MX0.e_BjUylQPpWB7fTKKgFJVVWAgjAIFWQZaIiKR4ItJF4"
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNzY1MDkxLCJpYXQiOjE2NjA3NDI3NzUsImp0aSI6IjgwNGEwNjBmMTg3MTRjN2Y5NDVlYWM0MzRjZjgzNWI0IiwidXNlcl9pZCI6MX0.1ClovwcLFscxN9DwNeTdFkvomQprW825zQnkZvaL_2A"
   // const token = "eyVOXrj4LBODkfptrLlaS-EtW0kdhy3tOYiGt_PdWnvY0"
 
   useEffect(() => {
     axios.get("http://localhost:8000/api/trainers/")
       .then((res) => {
         setTrainers(res.data)
+      })
+      .catch((err) => console.log(err));
+
+
+      axios.get("http://localhost:8000/api/branch/")
+      .then((res) => {
+        setBranches(res.data)
+      })
+      .catch((err) => console.log(err));
+
+      axios.get("http://localhost:8000/api/classes/")
+      .then((res) => {
+        setClasses(res.data)
       })
       .catch((err) => console.log(err));
     }, []);
@@ -52,32 +89,470 @@ function Trainers() {
         ]
       });
     }
-
-
-
     const closeTrainerCard = () =>{
       setTrainertCard(false)
     }
 
     const activateTrainerCard = (e, trainer) =>{
-      setTrainertCard(true)
-      setTrainer(trainer)
+      setCreateForm(false);
+      setTrainertCard(true);
+
+      const branch = branches.filter((branch) => {
+        return branch.id == trainer.branch_id
+      })
+
+      const cls = classes.filter((cls) => {
+        return cls.id == trainer.class_id
+      })
+
+      setTrainer({
+        ...trainer,
+        branch_id: branch[0].name,
+        class_id: cls[0].name
+      });
     }
 
-//     age
-// branch_id: {id: 4, created: '2022-08-15T22:56:10.276398Z', modified: '2022-08-15T22:56:10.276427Z', name: 'Smouha Branch', address: 'Smouha', …}
-// class_id:
-// name: "fitness"
-// experience: 3
-// gender: "male"
-// id: 4
-// name: "Mahmoud Saeed"
-// phone: "01155217475
-    console.log(trainer);
+    const closeCreateModal = (e) => {
+      e.preventDefault();
+      setCreateForm(false);
+    }
+
+    const activateCreateForm = (e) => {
+      e.preventDefault();
+      setCreateForm(true);
+      setTrainertCard(false);
+    }
+
+    const getNewTrainerName = (e) => {
+        setNewTrainer({
+          ...newTrainer,
+          name: e.target.value
+
+        })
+    }
+    const getNewTrainerAge = (e) => {
+      setNewTrainer({
+        ...newTrainer,
+        age: e.target.value
+
+      })
+    }
+    const getNewTrainerGender = (e) => {
+      setNewTrainer({
+        ...newTrainer,
+        gender: e.target.value
+
+      })
+    }
+    const getNewTrainerImage = (e) =>{
+      setNewTrainer({
+        ...newTrainer,
+        image: e.target.files[0]
+      })
+    }
+    const getNewTrainerPhone = (e) => {
+      setNewTrainer({
+        ...newTrainer,
+        phone: e.target.value
+
+      })
+    }
+    const getNewTrainerExperience = (e) => {
+      setNewTrainer({
+        ...newTrainer,
+        experience: e.target.value
+
+      })
+    }
+    const getNewTrainerBranch = (e) => {
+      setNewTrainer({
+        ...newTrainer,
+        branch_id: e.target.value
+
+      })
+    }
+    const getNewTrainerClass = (e) => {
+      setNewTrainer({
+        ...newTrainer,
+        class_id: e.target.value
+      })
+    }
+
+    const handelAddNewTRainer = (e) => {
+      e.preventDefault();
+      let errors = {}
+      if(!newTrainer.name){
+        errors.name = "Name can not be empty."
+      }
+      if(!newTrainer.image){
+        errors.image = "Image can not be empty."
+      }
+      if(!newTrainer.phone){
+        errors.phone = "Phone can not be empty."
+      }
+      if(!newTrainer.experience){
+        errors.experience = "Experience can not be empty."
+      }
+      if(!newTrainer.age){
+        errors.age = "Age can not be empty."
+      }
+      if(!newTrainer.branch_id){
+        errors.branch_id = "Branch can not be empty."
+      }
+      setNewTrainer({
+        ...newTrainer,
+        errors,
+      })
+
+      if(!Object.keys(errors).length){
+        axios.post("http://localhost:8000/api/trainers/create/",
+        newTrainer,
+        {headers: {
+          authorization:`Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }})
+        .then((res) => {
+          setTrainers([...trainers, newTrainer]);
+          setCreateForm(false)
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err);
+        })
+      
+      }
+    }
+    const createTrainerForm = () => {
+      return (
+        <div className="mx-auto mt-5 w-75">
+          {/* general form elements */}
+          <div className="card card-primary">
+            <div className="card-header text-right">
+              <h3 className="card-title">Create Trainer</h3>
+              <button className="btn btn-danger" onClick={closeCreateModal}>X</button>
+
+            </div>
+            {/* /.card-header */}
+            {/* form start */}
+            <form onSubmit={handelAddNewTRainer} encType="multipart/form-data">
+              <div className="card-body">
+                <div>
+                  <div className="mb-3">
+                    <label className="form-label">Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Name"
+                      onChange={getNewTrainerName}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Age</label>
+                      
+                    <input type="text" onChange={getNewTrainerAge} className="form-control" placeholder="Age" />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Photo</label>
+                    <input type="file" onChange={getNewTrainerImage} className="form-control"/>
+                  </div>
+                  <div className="mb-3">
+                  <label className="form-label">Gender</label>
+                    <select className="form-select" onChange={getNewTrainerGender}>
+                      <option>Select Gender</option>  
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Phone</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Phone"
+                      onChange={getNewTrainerPhone}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Experience</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Experience"
+                      onChange={getNewTrainerExperience}
+                    />
+                  </div>
+                  <div className="mb-3">
+                  <label className="form-label">Branch</label>
+                    <select className="form-select" onChange={getNewTrainerBranch}>
+                    <option>Select Branch</option>
+
+                      {
+                        branches.map((branch) =>{
+                          return(
+                            <option key={branch.id} value={branch.id}>{branch.name}</option>
+                          )
+                        })
+                      }
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                  <label className="form-label">Class</label>
+                    <select className="form-select" onChange={getNewTrainerClass}>
+                    <option>Select Class</option>
+                    {
+                        classes.map((cls) =>{
+                          return(
+                            <option key={cls.id} value={cls.id}>{cls.name}</option>
+                          )
+                        })
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+              {/* /.card-body */}
+              <div className="card-footer">
+                <button type="submit" className="btn btn-primary">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+          {/* /.card */}
+        </div>
+      );
+    }
+
+    const closeEditModal = (e) => {
+      e.preventDefault();
+      setEditForm(false);
+      setEditTrainer({
+        id:"",
+        age: '',
+        branch_id: "",
+        class_id: "",
+        experience: "",
+        gender: "",
+        name: "",
+        phone: "",
+      })
+    }
+
+    const activateEditTrainerForm = (e, trainer) => {
+      e.preventDefault()
+      setCreateForm(false);
+      setTrainertCard(false);
+      setEditForm(true);
+      const val = {...trainer}
+      delete val.image
+      setEditTrainer(val)
+    }
+
+  const getEditTrainerName = (e) => {
+      setEditTrainer({
+        ...editTrainer,
+        name: e.target.value
+      })
+  }
+  const getEditTrainerAge = (e) => {
+    setEditTrainer({
+      ...editTrainer,
+      age: e.target.value
+
+    })
+  }
+  const getEditTrainerGender = (e) => {
+    setEditTrainer({
+      ...editTrainer,
+      gender: e.target.value
+
+    })
+  }
+  const getEditTrainerPhone = (e) => {
+    setEditTrainer({
+      ...editTrainer,
+      phone: e.target.value
+
+    })
+  }
+  const getEditTrainerExperience = (e) => {
+    setEditTrainer({
+      ...editTrainer,
+      experience: e.target.value
+
+    })
+  }
+  const getEditTrainerBranch = (e) => {
+    setEditTrainer({
+      ...editTrainer,
+      branch_id: e.target.value
+
+    })
+  }
+  const getEditTrainerClass = (e) => {
+    setEditTrainer({
+      ...editTrainer,
+      class_id: e.target.value
+    })
+  }
+
+  const handelEditTrainer = (e) => {
+    e.preventDefault()
+    let errors = {}
+    if(!editTrainer.name){
+      errors.name = "Name can not be empty."
+    }
+    if(!editTrainer.phone){
+      errors.phone = "Phone can not be empty."
+    }
+    if(!editTrainer.experience){
+      errors.experience = "Experience can not be empty."
+    }
+    if(!editTrainer.age){
+      errors.age = "Age can not be empty."
+    }
+    if(!editTrainer.branch_id){
+      errors.branch_id = "Branch can not be empty."
+    }
+    setNewTrainer({
+      ...editTrainer,
+      errors,
+    })
+
+    if(!Object.keys(errors).length){
+      axios.patch(`http://localhost:8000/api/trainers/update/${editTrainer.id}/`,
+      editTrainer,
+      {headers: {
+        authorization:`Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }})
+      .then((res) => {
+        const newTrianers = trainers.filter((trainer) => {
+          return trainer.id != editTrainer.id
+        })
+      setTrainers(
+        [...newTrianers, editTrainer]
+      )
+        setEditForm(false)
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err);
+      })
+    
+    }
+  }
+
+    const editTrainerForm = () => {
+      return (
+        <div className="mx-auto mt-5 w-75">
+          {/* general form elements */}
+          <div className="card card-primary">
+            <div className="card-header text-right">
+              <h3 className="card-title">Create Trainer</h3>
+              <button className="btn btn-danger" onClick={closeEditModal}>X</button>
+
+            </div>
+            {/* /.card-header */}
+            {/* form start */}
+            <form onSubmit={handelEditTrainer} encType="multipart/form-data">
+              <div className="card-body">
+                <div>
+                  <div className="mb-3">
+                    <label className="form-label">Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Name"
+                      value={editTrainer.name}
+                      onChange={getEditTrainerName}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Age</label>
+                      
+                    <input type="text"  value={editTrainer.age} onChange={getEditTrainerAge} className="form-control" placeholder="Age" />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Photo</label>
+                    <input type="file" className="form-control"/>
+                  </div>
+                  <div className="mb-3">
+                  <label className="form-label">Gender</label>
+                    <select className="form-select"  value={editTrainer.gender} onChange={getEditTrainerGender}>
+                      <option>Select Gender</option>  
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Phone</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Phone"
+                      value={editTrainer.phone}
+                      onChange={getEditTrainerPhone}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Experience</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Experience"
+                      value={editTrainer.experience}
+                      onChange={getEditTrainerExperience}
+                    />
+                  </div>
+                  <div className="mb-3">
+                  <label className="form-label">Branch</label>
+                    <select className="form-select"  value={editTrainer.branch_id} onChange={getEditTrainerBranch}>
+                    <option>Select Branch</option>
+
+                      {
+                        branches.map((branch) =>{
+                          return(
+                            <option key={branch.id} value={branch.id}>{branch.name}</option>
+                          )
+                        })
+                      }
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                  <label className="form-label">Class</label>
+                    <select className="form-select"  value={editTrainer.class_id} onChange={getEditTrainerClass}>
+                    <option>Select Class</option>
+                    {
+                        classes.map((cls) =>{
+                          return(
+                            <option key={cls.id} value={cls.id}>{cls.name}</option>
+                          )
+                        })
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+              {/* /.card-body */}
+              <div className="card-footer">
+                <button type="submit" className="btn btn-primary">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+          {/* /.card */}
+        </div>
+      );
+    }
+
+
+
 
     const singleTrainerCard = () => {
       return(
-        <div className="mx-auto w-75 mt-5">
+        <div className="mx-auto mt-5 w-75">
           {/* general form elements */}
           <div className="card card-primary">
             <div className="card-header text-right">
@@ -86,11 +561,11 @@ function Trainers() {
             </div>
             <div className="card-body">
                 <div>
-                  <div className="my-4">
-                    <img src={trainer.image} className="mt-5 mx-5"height="350" width="700" />
+                  <div className="text-center">
+                    <img src={`http://localhost:8000${trainer.image}`} className="mt-5 mx-5"height="250" width="220" />
                 </div>
 
-                  <div className="mb-2">
+                  <div className="mb-2 mt-5">
                       <p><strong>Trainer Name:    </strong><span className="mx-5">{trainer.name}</span></p>
                   </div>
                   <div className="mb-2">
@@ -106,10 +581,10 @@ function Trainers() {
                       <p><strong>Trainer Phone:    </strong><span className="mx-5">{trainer.phone}</span></p>
                   </div>
                   <div className="mb-2">
-                      <p><strong>Trainer Branch:    </strong><span className="mx-5">{trainer.branch_id.name}</span></p>
+                      <p><strong>Trainer Branch:    </strong><span className="mx-5">{trainer.branch_id}</span></p>
                   </div>
                   <div className="mb-2">
-                      <p><strong>Trainer Class:    </strong><span className="mx-5">{trainer.class_id.name}</span></p>
+                      <p><strong>Trainer Class:    </strong><span className="mx-5">{trainer.class_id}</span></p>
                   </div>
                 </div>
             <button className="btn btn-danger" onClick={closeTrainerCard}>Close</button>
@@ -145,8 +620,6 @@ function Trainers() {
                     <th>Gender</th>
                     <th>Phone</th>
                     <th>Experience (years)</th>
-                    <th>Branch</th>
-                    <th>Class</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -161,10 +634,8 @@ function Trainers() {
                         <td>{trainer.gender}</td>
                         <td>{trainer.phone}</td>
                         <td>{trainer.experience}</td>
-                        <td>{trainer.branch_id.name}</td>
-                        <td>{trainer.class_id.name}</td>
                         <td>
-                          <a className="btn btn-warning mx-2" href="">
+                          <a className="btn btn-warning mx-2" onClick={e => activateEditTrainerForm(e, trainer)}>
                             Edit
                           </a>
                           <a className="btn btn-danger mx-2" onClick={e => deleteTrainer(e, trainer.id)}>
@@ -188,11 +659,13 @@ function Trainers() {
       </div>
       {/* /.row */}
       <div className="d-flex justify-content-center">
-        <a className="btn btn-success w-50" href="">
+        <a className="btn btn-success w-50" onClick={activateCreateForm}>
           Add Trainer
         </a>
       </div>
       {trianerCard && singleTrainerCard()}
+      {createForm && createTrainerForm()}
+      {editForm && editTrainerForm()}
     </div>
   );
 }

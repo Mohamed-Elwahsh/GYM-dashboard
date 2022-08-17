@@ -356,7 +356,7 @@ function Classes() {
                   <p><strong>Class Price:    </strong><span className="mx-5">{singleClass.price} EGP</span></p>
                   </div>
                   <div className="mb-5">
-                  <p><strong>Created at:    </strong><span className="mx-5">{singleClass.created.substr(0,10)}</span></p>
+                  <p><strong>Created at:    </strong><span className="mx-5">{String(singleClass.created).slice(0,10)}</span></p>
                   </div>
                   </div>
                   <button className="btn btn-danger" onClick={closeClassCard}>Close</button>

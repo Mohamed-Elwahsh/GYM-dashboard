@@ -18,7 +18,7 @@ function Branches() {
     phone:""
   })
 
-  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNjczNTY0LCJpYXQiOjE2NjA2NTYwNTgsImp0aSI6IjJjOWVkMGZkOWMxMjRiNDRiODQwMGZjZDU0YTcyY2UzIiwidXNlcl9pZCI6MX0.Ci7SsxBxAm54hrM_XRg2qvkqY1vXKzNUrpLFEgYLqyY"
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNzQzMDc1LCJpYXQiOjE2NjA3NDI3NzUsImp0aSI6ImNiYzQwYzRiMGE1ZTQ5YjU4MGI3OTg0Zjc5MjVhZWIxIiwidXNlcl9pZCI6MX0.VyjtcwVPsHsxffhFYnk3O5xj1imrQjo3g-sFHaIpZfw"
   // const token = "eyVOXrj4LBODkfptrLlaS-EtW0kdhy3tOYiGt_PdWnvY0"
 
   useEffect(() => {
@@ -245,7 +245,6 @@ function Branches() {
               authorization:`Bearer ${token}`
             }})
             .then((res) => {
-              
               const newbranches = branches.filter((branch) => {
                   return branch.id != editBranch.id
                 })
@@ -352,7 +351,7 @@ function Branches() {
                     <th>Action</th>
                   </tr>
                 </thead>
-                        <tbody>
+                  <tbody>
                         {
                     branches.map((branch)=>{
                       return(

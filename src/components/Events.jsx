@@ -29,7 +29,7 @@ function Events() {
   })
 
 
-  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNjk0Nzg1LCJpYXQiOjE2NjA2NTYwNTgsImp0aSI6IjQ4MmRiZGZjY2QwODQzYjliNmVhYTRlYmI0MTI4ZDYxIiwidXNlcl9pZCI6MX0.ZyCVFYOZLKbIE101BqeioYlm6hgSOa6clPChor0bJA0"
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNzU4NTY3LCJpYXQiOjE2NjA3NDI3NzUsImp0aSI6ImQwNzI3NmYyZmVlZjRlMTNhYmVhNmY3ZmFiY2U2OWNlIiwidXNlcl9pZCI6MX0._F2J1yhP9Kn9MH4RwEx8XuTbe9VJflPLeep29IPKM6k"
   // const token = "eyVOXrj4LBODkfptrLlaS-EtW0kdhy3tOYiGt_PdWnvY0"
 
   useEffect(() => {
@@ -282,7 +282,7 @@ function Events() {
       delete val.photo
       setEditEvent(val)
     }
-    console.log(editEvent);
+    
     const getEditEventName = (e) =>{
       setEditEvent(
         {
@@ -360,7 +360,6 @@ function Events() {
           const newEvents = events.filter((event) => {
             return event.id != editEvent.id
           })
-        
         setEvents(
           [...newEvents, editEvent]
         )
@@ -372,8 +371,6 @@ function Events() {
         })
       }
     }
-
-    console.log(editEvent.photo);
 
     const editEventForm = () => {
       return (
@@ -497,6 +494,9 @@ function Events() {
                   </div>
                   <div className="mb-5">
                   <p><strong>Event Price:    </strong><span className="mx-5">{event.price} EGP</span></p>
+                  </div>
+                  <div className="mb-5">
+                  <p><strong>Event Capacity:    </strong><span className="mx-5">{event.capacity}</span></p>
                   </div>
                   <div className="mb-5">
                   <p><strong>Start Date:    </strong><span className="mx-5">{event.start_date.substr(0,10)}</span></p>
