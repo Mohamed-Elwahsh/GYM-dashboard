@@ -7,19 +7,20 @@ import { confirmAlert } from 'react-confirm-alert';
 function Branches() {
 
   const [branches, setBranches] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  const [createModal, setCreateModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [editBranch, setEditBranch] = useState(
+    {id:'', name: '', address: '', phone: ''}
+  );
   const [newBranch, setNewBranch] = useState({
     name:"",
     address:"",
     phone:""
   })
 
-  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNjEwNzYwLCJpYXQiOjE2NjA1OTU4NzksImp0aSI6IjQwNzEzODljZWQ2NzRkMTE5NTBhYWQ5Mjk5MDA0YzA3IiwidXNlcl9pZCI6MX0.XsBliceu7DaYIdTU21-5LUZV0Y7GnmKr9n07V6ULo10"
+  const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwNjczNTY0LCJpYXQiOjE2NjA2NTYwNTgsImp0aSI6IjJjOWVkMGZkOWMxMjRiNDRiODQwMGZjZDU0YTcyY2UzIiwidXNlcl9pZCI6MX0.Ci7SsxBxAm54hrM_XRg2qvkqY1vXKzNUrpLFEgYLqyY"
   // const token = "eyVOXrj4LBODkfptrLlaS-EtW0kdhy3tOYiGt_PdWnvY0"
 
-  const colseModal = () =>{
-    return setOpenModal(false);
-  }
   useEffect(() => {
     axios.get("http://localhost:8000/api/branch/")
       .then((res) => {
@@ -46,10 +47,10 @@ function Branches() {
   
   const deleteBranch = (e, id) => {
     e.preventDefault();
-    console.log(id);
+    
     confirmAlert({
       title: 'Confirm to submit',
-      message: 'Are you sure you want to delete this item.',
+      message: 'Are you sure you want to delete this Branch?',
       buttons: [
         {
           label: 'Yes',
@@ -57,7 +58,6 @@ function Branches() {
         },
         {
           label: 'No',
-          //onClick: () => alert('Click No')
         }
       ]
     });
@@ -82,6 +82,7 @@ function Branches() {
       phone: e.target.value,
     });
   }
+
   const handelSubmit = (e) =>{
     e.preventDefault();
     let errors = {}
@@ -98,7 +99,7 @@ function Branches() {
       ...newBranch,
       errors,
     })
-    console.log(newBranch);
+    
     if (!Object.keys(errors).length){
       axios.post('http://localhost:8000/api/branch/create/',
             newBranch,
@@ -115,7 +116,7 @@ function Branches() {
               setBranches(
                 [...branches, newBranch]
               );
-              setOpenModal(false)
+              setCreateModal(false)
             })
           .catch((err)=>{
             console.log(err);
@@ -125,14 +126,14 @@ function Branches() {
     }
   } 
 
-  const renderModal = () => {
+  const renderCreateModal = () => {
     return (
       
-      <div className="content-wrapper">
+      <div className="mx-auto w-75 mt-5">
           <div className="card card-primary">
           <div className="card-header text-right">
             <h3 className="card-title">Create Branch</h3>
-            <button className="btn btn-danger" onClick={() => setOpenModal(false)}>X</button>
+            <button className="btn btn-danger" onClick={() => setCreateModal(false)}>X</button>
           </div>
           {/* /.card-header */}
           {/* form start */}
@@ -183,6 +184,144 @@ function Branches() {
     )
   }
 
+  const activateEditModal = (e, branch) => {
+    e.preventDefault();
+    setEditModal(true);
+    setEditBranch(branch);
+  }
+
+  const closeEditForm = (e) => {
+    e.preventDefault();
+    setEditModal(false);
+    setEditBranch({
+      name:"",
+      address:"",
+      phone:""
+    })
+  }
+
+  const getEditBranchName = (e) =>{
+    setEditBranch({
+      ...editBranch,
+      name: e.target.value,
+    });
+  }
+
+  const getEditBranchAddress = (e) =>{
+    setEditBranch({
+      ...editBranch,
+      address: e.target.value,
+    });
+  }
+
+  const getEditBranchPhone = (e) =>{
+    setEditBranch({
+      ...editBranch,
+      phone: e.target.value,
+    });
+  }
+  const handelEditBranch = (e) => {
+    e.preventDefault();
+    let errors = {}
+    if (!editBranch.name){
+      errors.name = "Name can not be empty."
+    }
+    if (!editBranch.address){
+      errors.address = "Address can not be empty."
+    }
+    if (!editBranch.phone){
+      errors.phone = "Phone can not be empty."
+    }
+    setEditBranch({
+      ...editBranch,
+      errors,
+    })
+
+    if (!Object.keys(errors).length){
+  
+      axios.put(`http://localhost:8000/api/branch/update/${editBranch.id}/`,
+            editBranch,
+            {headers: {
+              authorization:`Bearer ${token}`
+            }})
+            .then((res) => {
+              
+              const newbranches = branches.filter((branch) => {
+                  return branch.id != editBranch.id
+                })
+              
+              setBranches(
+                [...newbranches, editBranch]
+              )
+              setEditModal(false)
+            })
+            
+          .catch((err)=>{
+            console.log(err);
+            alert(err.response.data.detail)
+          })
+
+    }
+  }
+  const EditModalForm = () => {
+    return (
+      <div className="mx-auto w-75 mt-5">
+          <div className="card card-primary">
+          <div className="card-header text-right">
+            <h3 className="card-title">Edit Branch</h3>
+            <button className="btn btn-danger" onClick={closeEditForm}>X</button>
+          </div>
+          {/* /.card-header */}
+          {/* form start */}
+          <form onSubmit={handelEditBranch}>
+            <div className="card-body">
+              <div>
+                <div className="mb-3">
+                  <label className="form-label">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Name"
+                    value={editBranch.name}
+                    onChange={getEditBranchName}
+                  />
+                </div>
+                
+                <div className="mb-3">
+                  <label className="form-label">Address</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Address"
+                    value={editBranch.address}
+                    onChange={getEditBranchAddress}
+                  />
+                </div>
+                
+                <div className="mb-3">
+                  <label className="form-label">Phone</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Phone"
+                    value={editBranch.phone}
+                    onChange={getEditBranchPhone}
+                  />
+                </div>
+               
+              </div>
+            </div>
+            {/* /.card-body */}
+            <div className="card-footer">
+              <button type="submit" className="btn btn-primary">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+          </div>
+    )
+  }
 
   return (
     <div className="content-wrapper">
@@ -203,7 +342,7 @@ function Branches() {
             {/* /.card-header */}
             <div className="card-body table-responsive p-0">
 
-              <table className="table table-hover text-nowrap text-center">
+              <table className="table text-nowrap text-center">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -223,12 +362,12 @@ function Branches() {
                           <td>{branch.address}</td>
                           <td>{branch.phone}</td>
                           <td>
-                            <button className="btn btn-warning mx-2" href="" onClick={()=> colseModal()}>Edit</button>
+                            
+                            <a className="btn btn-warning mx-2" href="" onClick={e => activateEditModal(e, branch)}>
+                              Edit
+                            </a>
                             <a className="btn btn-danger mx-2" href="" onClick={e => deleteBranch(e, branch.id)}>
                               Delete
-                            </a>
-                            <a className="btn btn-info mx-2" href="">
-                              Show
                             </a>
                           </td>
                         </tr>
@@ -245,11 +384,11 @@ function Branches() {
       </div>
       {/* /.row */}
       <div className="d-flex justify-content-center">
-          <button className="btn btn-success mx-2 w-50" href="" onClick={() => setOpenModal(true)}>Add Branch</button>
+          <button className="btn btn-success mx-2 w-50" onClick={() => setCreateModal(true)}>Add Branch</button>
       </div>  
-          {openModal && renderModal()}
+          {createModal && renderCreateModal()}
+          {editModal && EditModalForm()}
       </div>
-
   );
 }
 
