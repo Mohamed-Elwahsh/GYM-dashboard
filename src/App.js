@@ -11,12 +11,14 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import Users from './components/Users'
 import Plans from './components/Plans'
+import Google from './components/Google'
 
 function App() {
   return (
     <>
     <Header />
     <Home />
+    <Google/>
     <Users/>
     <SideNav />
     <Trainers/>

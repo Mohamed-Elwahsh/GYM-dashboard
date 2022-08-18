@@ -351,7 +351,7 @@ function Plans() {
                         {
                             plans.map((plan) => {
                                 return (
-                                    <tr >
+                                    <tr key={plan.id}>
                                     <td>{plan.id}</td>
                                     <td>{plan.name}</td>
                                     <td>{plan.duration_months} months</td>
